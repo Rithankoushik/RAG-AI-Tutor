@@ -3,3 +3,8 @@ langchain
 chromadb # Vector storage
 pytest
 boto3
+streamlit
+langchain-chromadb
+ollama
+#ollama pull llama2
+#ollama pull nomic-embed-text

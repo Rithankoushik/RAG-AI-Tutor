@@ -1,15 +1,17 @@
 import argparse
 import os
 import shutil
-from langchain.document_loaders.pdf import PyPDFDirectoryLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from get_embedding_function import get_embedding_function
-from langchain.vectorstores.chroma import Chroma
+from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_chroma import Chroma
 
 
 CHROMA_PATH = "chroma"
-DATA_PATH = "data"
+DATA_PATH = r"C:\RAG\rag-tutorial-v2\data"
 
 
 def main():
@@ -36,7 +38,7 @@ def load_documents():
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=800,
-        chunk_overlap=80,
+        chunk_overlap=100,
         length_function=len,
         is_separator_regex=False,
     )

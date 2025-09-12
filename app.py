@@ -15,18 +15,10 @@ from langchain_community.vectorstores import Chroma
 import chromadb
 # DB Path
 CHROMA_PATH = "chroma_store"
-
-# Create a single PersistentClient (use everywhere)
 embedding_function = get_embedding_function()
-client = chromadb.PersistentClient(path=CHROMA_PATH)
 
-
-
-# Local client (no server needed)
-client = chromadb.PersistentClient(path=CHROMA_PATH)
-
+# Chroma DB (auto-persistent)
 db = Chroma(
-    client=client,
     persist_directory=CHROMA_PATH,
     embedding_function=embedding_function
 )

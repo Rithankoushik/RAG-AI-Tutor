@@ -1,10 +1,10 @@
 langchain>=0.2.0
 langchain-community>=0.2.0
-pypdf
 langchain-ollama
+pypdf
 pypdf2
+streamlit
 pytest
 boto3
-streamlit
 ollama
 chromadb>=0.5.0

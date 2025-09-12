@@ -5,15 +5,11 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_community.embeddings import OllamaEmbeddings
 
-from langchain_ollama import OllamaLLM
+from langchain_ollama.llms import OllamaLLM    # <- corrected import path
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import Document
 
-# Your embedding function file (make sure this exists)
 from get_embedding_function import get_embedding_function
-
-# For PDFs
-from PyPDF2 import PdfReader
 
 # DB Path
 CHROMA_PATH = "chroma"

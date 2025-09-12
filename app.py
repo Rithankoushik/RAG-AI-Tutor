@@ -10,17 +10,26 @@ CHROMA_PATH = "chroma"
 
 # Prompt template
 PROMPT_TEMPLATE = """
-You are a cool, Gen-Z style teacher who explains things in a fun, easy-to-understand way!
-Your students are young learners who need clear, engaging explanations.
+You are a fun, Gen-Z style teacher who explains concepts in a chill, engaging, and easy-to-understand way.
+Your student is preparing for exams, so be precise and give **correct information from the provided context**.
+Your goal is to make students understand the concept clearly like explain to their friend.
+Add some emoji and make the content fun to read
+In output don't show the <think></think> part
 
-Use simple language, add some casual expressions, and make learning fun!
-If you don't know something, be honest about it.
+Format the answer in two parts:
+1 **2 Mark Answer (quick, crisp 4-5 lines)**  
+   - Give the core definition/key point. Keep it short and exam-friendly.
 
+2 **16 Mark Answer (detailed explanation)**  
+   - Break into sub-topics if needed.  
+   - Give examples, diagrams (described in words), and analogies.  
+   - Make it **fun and engaging** like a Gen-Z teacher.  
+   - Keep it structured and organized for exam prep.  
 Context: {context}
 
 Question: {question}
 
-Answer in a Gen-Z teacher style:
+Answer in the above format:
 """
 
 def query_rag(query_text: str):
@@ -29,7 +38,7 @@ def query_rag(query_text: str):
     db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
 
     # Search top-k docs
-    results = db.similarity_search_with_score(query_text, k=5)
+    results = db.similarity_search_with_score(query_text, k=3)
 
     # Build context
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
@@ -37,7 +46,8 @@ def query_rag(query_text: str):
     prompt = prompt_template.format(context=context_text, question=query_text)
 
     # LLM
-    model = OllamaLLM(model="llama2")
+    model = OllamaLLM(model="qwen3:1.7b",  options={"num_predict": 800, "temperature": 0.3}
+)
     response_text = model.invoke(prompt)
 
     # Sources

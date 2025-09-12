@@ -1,10 +1,9 @@
 pypdf
 langchain
-chromadb # Vector storage
+chromadb 
 pytest
 boto3
 streamlit
-langchain-chromadb
 ollama
-#ollama pull llama2
-#ollama pull nomic-embed-text
+ollama pull qwen:1.7b
+ollama pull nomic-embed-text

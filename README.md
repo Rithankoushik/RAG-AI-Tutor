@@ -94,5 +94,3 @@ Get Gen-Z style answers with proper context + source references.
 ✨ Credits
 
 Built with ❤️ using LangChain, Ollama, and Chroma. Inspired by the need for a fun, conversational learning assistant that doesn’t bore you to death.
-
-👉 Bro, sollu — unga README fun swag style la vechuklama illa full corporate serious tone la venuma?

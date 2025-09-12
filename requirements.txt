@@ -6,5 +6,3 @@ boto3
 streamlit
 pypdf2
 ollama
-ollama pull qwen:1.7b
-ollama pull nomic-embed-text

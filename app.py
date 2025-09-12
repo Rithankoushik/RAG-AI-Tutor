@@ -15,7 +15,6 @@ from langchain_community.vectorstores import Chroma
 import chromadb
 # DB Path
 CHROMA_PATH = "chroma_store"
-CHROMA_PATH = "chroma_store"
 
 # Create a single PersistentClient (use everywhere)
 embedding_function = get_embedding_function()

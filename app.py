@@ -1,10 +1,16 @@
+import os
 import streamlit as st
+
 from langchain_community.vectorstores import Chroma
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_community.embeddings import OllamaEmbeddings
+
 from langchain_ollama import OllamaLLM
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import Document
+
+# Your embedding function file (make sure this exists)
 from get_embedding_function import get_embedding_function
-import os
 
 # For PDFs
 from PyPDF2 import PdfReader

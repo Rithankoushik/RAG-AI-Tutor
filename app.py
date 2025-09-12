@@ -2,8 +2,12 @@ import streamlit as st
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM
 from langchain.prompts import ChatPromptTemplate
-
+from langchain.schema import Document
 from get_embedding_function import get_embedding_function
+import os
+
+# For PDFs
+from PyPDF2 import PdfReader
 
 # DB Path
 CHROMA_PATH = "chroma"
@@ -32,6 +36,32 @@ Question: {question}
 Answer in the above format:
 """
 
+def extract_text_from_file(uploaded_file):
+    """Extract text from PDF or TXT"""
+    if uploaded_file.name.endswith(".pdf"):
+        reader = PdfReader(uploaded_file)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text() + "\n"
+        return text
+    elif uploaded_file.name.endswith(".txt"):
+        return uploaded_file.read().decode("utf-8")
+    else:
+        return None
+def add_documents(texts: list[str]):
+    """Add new documents into Chroma DB"""
+    embedding_function = get_embedding_function()
+    db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
+
+    # Convert texts into LangChain Documents
+    docs = [Document(page_content=text, metadata={"id": f"doc_{i}"}) for i, text in enumerate(texts)]
+
+    # Add docs to DB (auto-persist in langchain_chroma)
+    db.add_documents(docs)
+
+    return f"{len(docs)} documents added successfully ✅"
+
+
 def query_rag(query_text: str):
     # Prepare DB
     embedding_function = get_embedding_function()
@@ -46,13 +76,13 @@ def query_rag(query_text: str):
     prompt = prompt_template.format(context=context_text, question=query_text)
 
     # LLM
-    model = OllamaLLM(model="qwen3:1.7b",  options={"num_predict": 800, "temperature": 0.3}
-)
+    model = OllamaLLM(model="qwen3:1.7b", options={"num_predict": 800, "temperature": 0.3})
     response_text = model.invoke(prompt)
 
     # Sources
     sources = [doc.metadata.get("id", None) for doc, _score in results]
     return response_text, sources
+
 
 # Streamlit App
 st.set_page_config(page_title="RAG AI-Chatbot", page_icon="📚", layout="centered")
@@ -60,12 +90,29 @@ st.set_page_config(page_title="RAG AI-Chatbot", page_icon="📚", layout="center
 st.title("📚 RAG-Chatbot")
 st.markdown("Chat with your PDFs like a **Gen-Z Teacher**📚")
 
-# Text input
-query_text = st.text_input("💬 Ask a question:", "")
+# Section 1: Upload Documents
+st.subheader("📂 Upload New Docs")
+uploaded_files = st.file_uploader("Upload your notes (PDF or TXT)", type=["pdf", "txt"], accept_multiple_files=True)
+
+if uploaded_files and st.button("➕ Add to DB"):
+    texts = []
+    for uploaded_file in uploaded_files:
+        text = extract_text_from_file(uploaded_file)
+        if text:
+            texts.append(text)
+    if texts:
+        msg = add_documents(texts)
+        st.success(msg)
+    else:
+        st.error("Unsupported file format da makku ❌")
+
+# Section 2: Ask Questions
+st.subheader("💬 Ask Questions")
+query_text = st.text_input("Ask me anything from your docs:", "")
 
 if st.button("Ask"):
     if query_text.strip() == "":
-        st.warning("Type something, da makku 🤌")
+        st.warning("Type something da lavdea 🤌")
     else:
         with st.spinner("Thinking... 🧠"):
             response, sources = query_rag(query_text)

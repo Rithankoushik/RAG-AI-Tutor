@@ -10,9 +10,20 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.schema import Document
 
 from get_embedding_function import get_embedding_function
-
+from PyPDF2 import PdfReader
+from langchain_community.vectorstores import Chroma
+import chromadb
 # DB Path
-CHROMA_PATH = "chroma"
+CHROMA_PATH = "chroma_store"
+
+# Local client (no server needed)
+client = chromadb.PersistentClient(path=CHROMA_PATH)
+
+db = Chroma(
+    client=client,
+    persist_directory=CHROMA_PATH,
+    embedding_function=embedding_function
+)
 
 # Prompt template
 PROMPT_TEMPLATE = """

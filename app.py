@@ -1,3 +1,9 @@
+# ---- FIX for sqlite3 issue ----
+import sys
+import pysqlite3
+sys.modules["sqlite3"] = pysqlite3
+# --------------------------------
+
 import streamlit as st
 from langchain_community.vectorstores import Chroma
 from langchain_ollama import OllamaLLM
@@ -25,9 +31,10 @@ Format the answer in two parts:
 2. **16 Mark Answer (detailed explanation)**  
    - Break into sub-topics if needed.  
    - Give examples, diagrams (described in words), and analogies.  
-   -give Answer in this formate Introduction to give topic , Key points and sub topics upto 5 or 6 then examples and Conclusion
+   - Give Answer in this format: Introduction to topic, Key points & 5-6 sub topics, then examples, then Conclusion
    - Make it **fun and engaging** like a Gen-Z teacher.  
    - Keep it structured and organized for exam prep.  
+
 Context: {context}
 
 Question: {question}
@@ -41,12 +48,16 @@ def extract_text_from_file(uploaded_file):
         reader = PdfReader(uploaded_file)
         text = ""
         for page in reader.pages:
-            text += page.extract_text() + "\n"
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + "\n"
         return text
     elif uploaded_file.name.endswith(".txt"):
         return uploaded_file.read().decode("utf-8")
     else:
         return None
+
+
 def add_documents(texts: list[str]):
     """Add new documents into Chroma DB"""
     embedding_function = get_embedding_function()

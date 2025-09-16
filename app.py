@@ -1,27 +1,14 @@
-import os
 import streamlit as st
-
 from langchain_community.vectorstores import Chroma
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
-from langchain_community.embeddings import OllamaEmbeddings
-
-from langchain_ollama.llms import OllamaLLM    # <- corrected import path
+from langchain_ollama import OllamaLLM
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import Document
-
 from get_embedding_function import get_embedding_function
+import os
 from PyPDF2 import PdfReader
-from langchain_community.vectorstores import Chroma
-import chromadb
-# DB Path
-CHROMA_PATH = "chroma_store"
-embedding_function = get_embedding_function()
 
-# Chroma DB (auto-persistent)
-db = Chroma(
-    persist_directory=CHROMA_PATH,
-    embedding_function=embedding_function
-)
+# DB Path
+CHROMA_PATH = "chroma"
 
 # Prompt template
 PROMPT_TEMPLATE = """
@@ -32,12 +19,13 @@ Add some emoji and make the content fun to read
 In output don't show the <think></think> part
 
 Format the answer in two parts:
-1 **2 Mark Answer (quick, crisp 4-5 lines)**  
+1. **2 Mark Answer (quick, crisp 4-5 lines)**  
    - Give the core definition/key point. Keep it short and exam-friendly.
 
-2 **16 Mark Answer (detailed explanation)**  
+2. **16 Mark Answer (detailed explanation)**  
    - Break into sub-topics if needed.  
    - Give examples, diagrams (described in words), and analogies.  
+   -give Answer in this formate Introduction to give topic , Key points and sub topics upto 5 or 6 then examples and Conclusion
    - Make it **fun and engaging** like a Gen-Z teacher.  
    - Keep it structured and organized for exam prep.  
 Context: {context}
